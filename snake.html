@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        canvas {
+            background: #080d16;
+            border: 5px solid green;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="mycan" class="mycan" width="1860" height="920"></canvas>
+    <script>
+        var canvas = document.getElementById('mycan');
+        var ctx = canvas.getContext('2d');
+        var snakeSize = 20;
+        var snakeX = 100;
+        var snakeY = 100;
+        var foodX = 310;
+        var foodY = 310;
+        var foodSize = 10;
+        var dx = 20;
+        var dy = 20;
+        var leftPressed = false;
+        var rightPressed = true;
+        var topPressed = false;
+        var bottomPressed = false;
+        var head;
+        var snakeBody = [{
+            x: snakeX,
+            y: snakeY
+        }, {
+            x: snakeX - 20,
+            y: snakeY
+        }];
+        var z = 0,
+            e = 0;
+
+
+
+        //keypress event listner
+        document.addEventListener('keypress', keyHandler, false);
+        //keypress event handler function
+        function keyHandler(e) {
+            if (e.keyCode == 37 || e.which == 37) {
+                leftPressed = true;
+                rightPressed = false;
+                topPressed = false;
+                bottomPressed = false;
+            } else if (e.keyCode == 38 || e.which == 38) {
+                leftPressed = false;
+                rightPressed = false;
+                topPressed = true;
+                bottomPressed = false;
+            } else if (e.keyCode == 39 || e.which == 39) {
+                leftPressed = false;
+                rightPressed = true;
+                topPressed = false;
+                bottomPressed = false;
+            } else if (e.keyCode == 40 || e.which == 40) {
+                leftPressed = false;
+                rightPressed = false;
+                topPressed = false;
+                bottomPressed = true;
+            }
+        }
+
+        function alertExit() {
+            alert('GAME OVER');
+            document.location.reload();
+        }
+
+        function collisionDetection() {
+            for (let p = 1; p < snakeBody.length; p++) {
+                if ((snakeBody[0].x == snakeBody[p].x && snakeBody[0].y == snakeBody[p].y) || (snakeBody[0].y < 0 || snakeBody[0].y > canvas.height || snakeBody[0].x < 0 || snakeBody[0].x > canvas.width)) {
+                    alertExit();
+                }
+            }
+        }
+
+        function score() {
+            ctx.beginPath();
+            ctx.font = "33px sans-serif";
+            ctx.fillStyle = "aqua";
+            ctx.fillText("Score: " + z, 80, 35);
+        }
+
+        //draw food 
+        function food() {
+            ctx.beginPath();
+            ctx.arc(foodX, foodY, foodSize, 0, Math.PI * 2);
+            ctx.fillStyle = "pink";
+            ctx.fill();
+            ctx.closePath();
+        }
+        //draw snake
+        function snake() {
+            for (var l = 0; l < snakeBody.length; l++) {
+                ctx.beginPath();
+                ctx.rect(snakeBody[l].x, snakeBody[l].y, snakeSize, snakeSize);
+                if (l == 0) {
+                    ctx.fillStyle = "lightblue";
+                } else {
+                    ctx.fillStyle = 'grey';
+                }
+                ctx.fill();
+                ctx.closePath();
+
+            }
+            console.log("l " + l);
+            if (rightPressed && snakeX + dx < canvas.width) {
+                snakeX += dx;
+            } else if (leftPressed && snakeX > 0) {
+                snakeX += -dx;
+            } else if (topPressed && snakeY > 0) {
+                snakeY += -dy;
+            } else if (bottomPressed && snakeY + dy < canvas.height) {
+                snakeY += dy;
+            }
+            head = {
+                x: snakeX,
+                y: snakeY
+            };
+
+            console.log("length: " + snakeBody.length);
+            console.log("unshift: " + snakeBody.unshift(head));
+            tail();
+            console.log(snakeBody.pop());
+
+        }
+
+        function tail() {
+            if ((snakeX + dx / 2 > foodX - foodSize && snakeX + dx / 2 < foodX + foodSize) && (snakeY + dy / 2 > foodY - foodSize && snakeY + dy / 2 < foodY + foodSize)) {
+                foodX = (Math.floor(Math.random() * 88) + 1) * 20 + 10;
+                foodY = (Math.floor(Math.random() * 45) + 1) * 20 + 10;
+                z++;
+                snakeBody[snakeBody.length] = {
+                    x: snakeBody[snakeBody.length - 1].x,
+                    y: snakeBody[snakeBody.length - 1].y + 20
+                };
+
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            food();
+            snake();
+            collisionDetection();
+            score();
+            // tail();
+            console.log("length: " + snakeBody.length);
+            console.log("z " + z);
+        }
+
+        setInterval(draw, 80);
+    </script>
+</body>
+
+</html>
