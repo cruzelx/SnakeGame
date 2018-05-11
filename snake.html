@@ -36,8 +36,7 @@
             x: snakeX - 20,
             y: snakeY
         }];
-        var z = 0,
-            e = 0;
+        var z = 0;
 
 
 
@@ -110,7 +109,6 @@
                 ctx.closePath();
 
             }
-            console.log("l " + l);
             if (rightPressed && snakeX + dx < canvas.width) {
                 snakeX += dx;
             } else if (leftPressed && snakeX > 0) {
@@ -124,11 +122,10 @@
                 x: snakeX,
                 y: snakeY
             };
-
-            console.log("length: " + snakeBody.length);
-            console.log("unshift: " + snakeBody.unshift(head));
+            
+            snakeBody.unshift(head);
             tail();
-            console.log(snakeBody.pop());
+            snakeBody.pop();
 
         }
 
@@ -151,9 +148,6 @@
             snake();
             collisionDetection();
             score();
-            // tail();
-            console.log("length: " + snakeBody.length);
-            console.log("z " + z);
         }
 
         setInterval(draw, 80);
